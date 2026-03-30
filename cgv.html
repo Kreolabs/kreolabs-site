@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KreoLabs — Conditions Générales de Vente</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: none !important;
+  }
+
+  :root {
+    --ink: #050508;
+    --paper: #f0ede8;
+    --acid: #c8ff00;
+    --ember: #ff3d1f;
+    --chrome: #a8b0c0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  #cursorDot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--acid);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--acid);
+    pointer-events: none;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    will-change: transform;
+  }
+
+  #cursorRing {
+    position: fixed;
+    width: 38px;
+    height: 38px;
+    border: 1.5px solid var(--acid);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: width 0.2s ease, height 0.2s ease, opacity 0.3s, margin 0.2s ease;
+    will-change: transform;
+  }
+
+  #cursorDot.active { opacity: 1; }
+  #cursorRing.active { opacity: 1; }
+
+  body:has(a:hover) #cursorRing,
+  body:has(button:hover) #cursorRing {
+    width: 58px;
+    height: 58px;
+    margin: -10px 0 0 -10px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: var(--acid);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--chrome);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--acid);
+    transition: width 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--paper); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    padding: 14rem 3rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-hero::before {
+    content: 'CGV';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(12rem, 28vw, 28rem);
+    color: rgba(200,255,0,0.018);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .noise {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 256px;
+    pointer-events: none;
+    opacity: 0.35;
+  }
+
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image:
+      linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+  }
+
+  .hero-kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--acid);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background: var(--acid);
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.5s forwards;
+  }
+
+  .page-title em {
+    font-style: normal;
+    color: var(--acid);
+    display: block;
+  }
+
+  .page-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.7s forwards;
+  }
+
+  .meta-chip {
+    padding: 0.4rem 1rem;
+    border: 1px solid rgba(200,255,0,0.2);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--chrome);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CGV CONTENT ── */
+  .cgv-body {
+    padding: 2rem 3rem 10rem;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  /* ── SIDEBAR (table of contents) ── */
+  .cgv-toc {
+    position: sticky;
+    top: 8rem;
+  }
+
+  .toc-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(168,176,192,0.5);
+    margin-bottom: 1.2rem;
+  }
+
+  .toc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .toc-list a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--chrome);
+    text-decoration: none;
+    padding: 0.45rem 0;
+    display: block;
+    border-left: 2px solid transparent;
+    padding-left: 1rem;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .toc-list a:hover {
+    color: var(--acid);
+    border-left-color: var(--acid);
+  }
+
+  /* ── ARTICLE ── */
+  .cgv-article {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Section block */
+  .cgv-section {
+    border-top: 1px solid rgba(200,255,0,0.12);
+    padding: 3rem 0;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 2rem;
+    align-items: start;
+    scroll-margin-top: 9rem;
+    transition: border-color 0.3s;
+  }
+
+  .cgv-section:last-child {
+    border-bottom: 1px solid rgba(200,255,0,0.12);
+  }
+
+  .cgv-section:hover { border-top-color: rgba(200,255,0,0.35); }
+
+  .cgv-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--acid);
+    padding-top: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cgv-section-inner h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.06em;
+    color: var(--paper);
+    margin-bottom: 1.5rem;
+  }
+
+  .cgv-section-inner p {
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: var(--chrome);
+    margin-bottom: 1rem;
+  }
+
+  .cgv-section-inner p:last-child { margin-bottom: 0; }
+
+  .cgv-section-inner strong {
+    color: var(--paper);
+    font-weight: 400;
+  }
+
+  .cgv-section-inner ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1rem 0;
+  }
+
+  .cgv-section-inner ul li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--chrome);
+  }
+
+  .cgv-section-inner ul li::before {
+    content: '—';
+    flex-shrink: 0;
+    color: var(--acid);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    margin-top: 0.15rem;
+  }
+
+  .cgv-highlight {
+    margin: 1.5rem 0;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid rgba(200,255,0,0.15);
+    background: rgba(200,255,0,0.03);
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--chrome);
+  }
+
+  .cgv-highlight strong { color: var(--acid); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid rgba(200,255,0,0.1);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--chrome);
+  }
+
+  footer a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--chrome);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  footer a:hover { color: var(--acid); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .cgv-body {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    .cgv-toc { position: static; display: none; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.5rem; }
+    .nav-links { display: none; }
+    .page-hero { padding: 10rem 1.5rem 4rem; }
+    .cgv-body { padding: 2rem 1.5rem 6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursorDot"></div>
+<div id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">KreoLabs</a>
+  <ul class="nav-links">
+    <li><a href="index.html#works">Projets</a></li>
+    <li><a href="index.html#about">Studio</a></li>
+    <li><a href="tarifs.html">Tarifs</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="noise"></div>
+  <div class="grid-lines"></div>
+  <div class="hero-inner">
+    <p class="hero-kicker">Mentions légales</p>
+    <h1 class="page-title">Conditions<br><em>Générales</em><em>de Vente.</em></h1>
+    <div class="page-meta">
+      <span class="meta-chip">Version 1.0</span>
+      <span class="meta-chip">En vigueur au 1er janvier 2025</span>
+      <span class="meta-chip">KreoLabs — Studio créatif, Paris</span>
+    </div>
+  </div>
+</div>
+
+<!-- CGV BODY -->
+<div class="cgv-body">
+
+  <!-- TABLE OF CONTENTS -->
+  <aside class="cgv-toc">
+    <p class="toc-label">Sommaire</p>
+    <ul class="toc-list">
+      <li><a href="#art1">01 — Objet</a></li>
+      <li><a href="#art2">02 — Devis &amp; commande</a></li>
+      <li><a href="#art3">03 — Tarifs &amp; paiement</a></li>
+      <li><a href="#art4">04 — Délais de réalisation</a></li>
+      <li><a href="#art5">05 — Obligations du client</a></li>
+      <li><a href="#art6">06 — Propriété intellectuelle</a></li>
+      <li><a href="#art7">07 — Révisions &amp; modifications</a></li>
+      <li><a href="#art8">08 — Responsabilité</a></li>
+      <li><a href="#art9">09 — Résiliation</a></li>
+      <li><a href="#art10">10 — Confidentialité</a></li>
+      <li><a href="#art11">11 — Droit applicable</a></li>
+    </ul>
+  </aside>
+
+  <!-- ARTICLE CONTENT -->
+  <article class="cgv-article">
+
+    <div class="cgv-section" id="art1">
+      <span class="cgv-num">01</span>
+      <div class="cgv-section-inner">
+        <h2>Objet</h2>
+        <p>Les présentes Conditions Générales de Vente (CGV) régissent l'ensemble des prestations de services proposées par <strong>KreoLabs</strong>, studio créatif indépendant, à ses clients professionnels et particuliers.</p>
+        <p>Elles s'appliquent à toute commande de prestations de design, développement web, motion design, branding ou toute autre mission confiée à KreoLabs, à l'exclusion de toute autre condition.</p>
+        <p>Toute commande implique l'acceptation sans réserve des présentes CGV. Ces conditions prévalent sur tout autre document du client, sauf accord écrit préalable.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art2">
+      <span class="cgv-num">02</span>
+      <div class="cgv-section-inner">
+        <h2>Devis &amp; commande</h2>
+        <p>Toute prestation fait l'objet d'un devis préalable établi par KreoLabs sur la base des informations transmises par le client. Ce devis est valable <strong>30 jours</strong> à compter de sa date d'émission.</p>
+        <p>La commande est réputée ferme et définitive à réception :</p>
+        <ul>
+          <li>Du devis signé ou de la validation écrite par email</li>
+          <li>Du paiement de l'acompte correspondant (50 % du montant total HT)</li>
+        </ul>
+        <p>Aucune prestation ne sera démarrée avant réception de ces deux éléments. Toute modification substantielle du périmètre initial fera l'objet d'un avenant tarifaire soumis à validation.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art3">
+      <span class="cgv-num">03</span>
+      <div class="cgv-section-inner">
+        <h2>Tarifs &amp; paiement</h2>
+        <p>Les tarifs sont exprimés en euros hors taxes (HT). KreoLabs n'est pas assujetti à la TVA au titre de l'article 293 B du CGI. Les prix indiqués dans le devis sont fermes pour la durée de la mission.</p>
+
+        <div class="cgv-highlight">
+          <strong>Modalités de paiement standards :</strong><br>
+          50 % à la commande · 50 % à la livraison finale
+        </div>
+
+        <p>En cas de retard de paiement, des pénalités de retard seront appliquées au taux légal en vigueur, conformément à la loi n° 92-1442 du 31 décembre 1992. Une indemnité forfaitaire de recouvrement de <strong>40 €</strong> sera également due.</p>
+        <p>Les paiements s'effectuent par virement bancaire ou via les moyens de paiement convenus dans le devis. Aucun escompte n'est accordé pour paiement anticipé.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art4">
+      <span class="cgv-num">04</span>
+      <div class="cgv-section-inner">
+        <h2>Délais de réalisation</h2>
+        <p>Les délais de livraison sont indiqués à titre indicatif dans le devis. Ils débutent à compter de la réception de l'acompte et de l'ensemble des éléments nécessaires à la réalisation de la mission (contenus, accès, briefs).</p>
+        <p>KreoLabs s'engage à respecter au mieux les délais convenus. Tout retard imputable au client (réponse tardive, transmission de documents incomplets, validation tardive) entraînera automatiquement un décalage équivalent du planning.</p>
+        <p>En cas de force majeure ou d'événement indépendant de la volonté de KreoLabs, les délais seront automatiquement prolongés sans que cela puisse donner lieu à indemnisation.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art5">
+      <span class="cgv-num">05</span>
+      <div class="cgv-section-inner">
+        <h2>Obligations du client</h2>
+        <p>Le client s'engage à :</p>
+        <ul>
+          <li>Fournir un brief clair et complet avant le démarrage de la mission</li>
+          <li>Transmettre l'ensemble des contenus, fichiers et accès nécessaires dans les délais convenus</li>
+          <li>Désigner un interlocuteur unique disposant du pouvoir de décision pour les validations</li>
+          <li>Répondre aux demandes de KreoLabs dans un délai raisonnable (5 jours ouvrés maximum)</li>
+          <li>S'assurer de détenir tous les droits sur les contenus fournis (textes, images, vidéos)</li>
+        </ul>
+        <p>Le client garantit KreoLabs contre tout recours de tiers lié aux contenus qu'il a fournis.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art6">
+      <span class="cgv-num">06</span>
+      <div class="cgv-section-inner">
+        <h2>Propriété intellectuelle</h2>
+        <p>Les créations réalisées par KreoLabs restent sa propriété intellectuelle jusqu'au paiement intégral des sommes dues. À réception du solde, le client dispose d'une <strong>licence d'utilisation exclusive</strong> sur les livrables finaux, pour les usages définis dans le devis.</p>
+        <p>Les fichiers sources (PSDs, AI, Figma, code source) sont livrés uniquement si cela est explicitement mentionné dans le devis.</p>
+        <p>KreoLabs se réserve le droit de présenter les travaux réalisés dans le cadre de son portfolio, sur ses réseaux sociaux et sur tout support promotionnel, sauf accord contraire écrit du client.</p>
+
+        <div class="cgv-highlight">
+          <strong>Note :</strong> Toute réutilisation partielle ou totale des créations à des fins non prévues dans le devis devra faire l'objet d'un accord écrit et d'une négociation tarifaire spécifique.
+        </div>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art7">
+      <span class="cgv-num">07</span>
+      <div class="cgv-section-inner">
+        <h2>Révisions &amp; modifications</h2>
+        <p>Le nombre de rounds de révisions inclus est précisé dans le devis. Les révisions se définissent comme des ajustements mineurs ne remettant pas en cause l'orientation créative validée.</p>
+        <p>Toute révision supplémentaire au-delà du forfait inclus sera facturée au taux horaire de <strong>60 €/heure</strong>, après accord préalable du client.</p>
+        <p>Les modifications structurelles (changement de direction créative, refonte du concept initial) constituent un nouveau périmètre et feront l'objet d'un avenant tarifaire distinct.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art8">
+      <span class="cgv-num">08</span>
+      <div class="cgv-section-inner">
+        <h2>Responsabilité</h2>
+        <p>KreoLabs s'engage à réaliser les prestations avec soin et professionnalisme. Sa responsabilité est limitée aux dommages directs et prévisibles, dans la limite du montant facturé pour la prestation concernée.</p>
+        <p>KreoLabs ne saurait être tenu responsable :</p>
+        <ul>
+          <li>Des conséquences d'une utilisation des livrables non conforme à leur destination</li>
+          <li>Des défaillances techniques des plateformes, hébergeurs ou services tiers</li>
+          <li>Des dommages indirects (pertes de revenus, préjudice d'image, etc.)</li>
+          <li>Des modifications apportées par le client ou un tiers après la livraison</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art9">
+      <span class="cgv-num">09</span>
+      <div class="cgv-section-inner">
+        <h2>Résiliation</h2>
+        <p>En cas de résiliation à l'initiative du client, les sommes correspondant au travail déjà réalisé restent dues. L'acompte versé est acquis à KreoLabs à titre d'indemnisation forfaitaire minimale.</p>
+        <p>KreoLabs se réserve le droit de résilier la mission en cas de manquements répétés du client à ses obligations, notamment en cas de non-paiement ou d'absence de réponse prolongée, sans préjudice des sommes dues pour les travaux réalisés.</p>
+        <p>La résiliation sera notifiée par email avec accusé de réception ou par lettre recommandée.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art10">
+      <span class="cgv-num">10</span>
+      <div class="cgv-section-inner">
+        <h2>Confidentialité</h2>
+        <p>KreoLabs s'engage à traiter avec la plus stricte confidentialité toutes les informations communiquées dans le cadre des missions (données stratégiques, informations financières, contenus non publiés).</p>
+        <p>Les données personnelles collectées dans le cadre des échanges sont utilisées exclusivement pour la réalisation des prestations et ne sont jamais transmises à des tiers, conformément au Règlement Général sur la Protection des Données (RGPD).</p>
+        <p>Le client dispose d'un droit d'accès, de rectification et de suppression de ses données en contactant KreoLabs par email.</p>
+      </div>
+    </div>
+
+    <div class="cgv-section" id="art11">
+      <span class="cgv-num">11</span>
+      <div class="cgv-section-inner">
+        <h2>Droit applicable &amp; litiges</h2>
+        <p>Les présentes CGV sont soumises au droit français. Tout litige relatif à leur interprétation ou exécution sera soumis, à défaut de règlement amiable, à la compétence exclusive des tribunaux de Paris.</p>
+        <p>En cas de litige avec un client consommateur, celui-ci peut recourir gratuitement à un médiateur de la consommation conformément à la directive européenne 2013/11/UE.</p>
+
+        <div class="cgv-highlight">
+          Pour toute question relative à ces CGV :<br>
+          <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1b7874756f7a786f5b70697e74777a7968357d69">[email&#160;protected]</a></strong> · KreoLabs Studio — Paris, France
+        </div>
+      </div>
+    </div>
+
+  </article>
+</div>
+
+<footer>
+  <span>© 2025 KreoLabs</span>
+  <div style="display:flex; gap:2rem; align-items:center;">
+    <a href="tarifs.html">Tarifs</a>
+    <span>Designed &amp; Built in Paris</span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const cursorDot = document.getElementById('cursorDot');
+  const cursorRing = document.getElementById('cursorRing');
+  const DOT_HALF = 4;
+  const RING_HALF = 19;
+
+  document.addEventListener('mousemove', (e) => {
+    const mx = e.clientX, my = e.clientY;
+    cursorDot.style.transform = `translate(${mx - DOT_HALF}px, ${my - DOT_HALF}px)`;
+    cursorRing.style.transform = `translate(${mx - RING_HALF}px, ${my - RING_HALF}px)`;
+    cursorDot.classList
